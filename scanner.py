@@ -28,8 +28,8 @@ class Config:
     TREND_MA: int            = 50      # MA period for trend filter
     DATA_PERIOD: str         = "3mo"   # Reduced from 6mo — 3mo is enough
     DATA_INTERVAL: str       = "1d"
-    BATCH_SIZE: int          = 50      # Stocks per bulk yf.download call
-    MAX_WORKERS: int         = 6       # Parallel batch threads (keep ≤ 10)
+    BATCH_SIZE: int          = 20      # Stocks per bulk yf.download call
+    MAX_WORKERS: int         = 3       # Parallel batch threads (keep ≤ 10)
 
     # Scoring weights
     SCORE_BASE: int          = 3
