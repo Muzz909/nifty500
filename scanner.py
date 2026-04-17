@@ -231,7 +231,7 @@ def _process_batch(batch: list[str]) -> list[BreakoutResult]:
     then check each for breakout conditions.
     One batch of 50 stocks takes ~2–4 seconds vs ~50–100 seconds sequentially.
     """
-   print(f"🚀 Starting batch: {batch[0]} → {len(batch)} stocks")
+   # print(f"🚀 Starting batch: {batch[0]} → {len(batch)} stocks")
    start_time = time.time()
     try:
         raw = yf.download(
