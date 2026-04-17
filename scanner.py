@@ -244,7 +244,6 @@ def _process_batch(batch: list[str]) -> list[BreakoutResult]:
             threads     = True,
         )
     except Exception as e:
-    print(f"❌ Batch failed: {batch[0]} | Error: {e}")
     return []
 
     results = []
