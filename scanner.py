@@ -291,7 +291,6 @@ def run_scan(
 
     # Split into fixed-size batches
     batches = [
-        print(f"📦 Total batches created: {len(batches)}")
         symbols[i : i + Config.BATCH_SIZE]
         for i in range(0, len(symbols), Config.BATCH_SIZE)
     ]
