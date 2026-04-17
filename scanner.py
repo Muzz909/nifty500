@@ -69,6 +69,7 @@ def get_nifty500_symbols() -> list[str]:
     Fetches from NSE once per calendar day; uses in-memory cache thereafter.
     Falls back to a hardcoded list if NSE is unreachable.
     """
+    print("📥 Fetching Nifty 500 symbols...")
     today = date.today()
 
     # Return cached result if already fetched today
@@ -77,6 +78,7 @@ def get_nifty500_symbols() -> list[str]:
 
     try:
         df = pd.read_csv(NSE_CSV_URL)
+        print("🌐 NSE CSV downloaded")
         symbols = (
             df["Symbol"]
             .dropna()
@@ -84,6 +86,7 @@ def get_nifty500_symbols() -> list[str]:
             .str.upper()
             .tolist()
         )
+       
         symbols = [s + ".NS" for s in symbols if s]
 
         if len(symbols) < 100:
@@ -92,6 +95,7 @@ def get_nifty500_symbols() -> list[str]:
         _symbol_cache["date"]    = today
         _symbol_cache["symbols"] = symbols
         print(f"✅ Fetched {len(symbols)} Nifty 500 symbols from NSE ({today})")
+        print("📊 Symbol processing complete")
         return symbols
 
     except Exception as e:
@@ -227,6 +231,8 @@ def _process_batch(batch: list[str]) -> list[BreakoutResult]:
     then check each for breakout conditions.
     One batch of 50 stocks takes ~2–4 seconds vs ~50–100 seconds sequentially.
     """
+   print(f"🚀 Starting batch: {batch[0]} → {len(batch)} stocks")
+   start_time = time.time()
     try:
         raw = yf.download(
             tickers     = batch,
@@ -237,8 +243,9 @@ def _process_batch(batch: list[str]) -> list[BreakoutResult]:
             progress    = False,
             threads     = True,
         )
-    except Exception:
-        return []
+    except Exception as e:
+    print(f"❌ Batch failed: {batch[0]} | Error: {e}")
+    return []
 
     results = []
 
@@ -259,6 +266,8 @@ def _process_batch(batch: list[str]) -> list[BreakoutResult]:
         except (KeyError, Exception):
             continue
 
+    elapsed = time.time() - start_time
+    print(f"✅ Finished batch: {batch[0]} in {elapsed:.2f}s | Found: {len(results)} breakouts")
     return results
 
 
@@ -266,6 +275,7 @@ def _process_batch(batch: list[str]) -> list[BreakoutResult]:
 # FULL SCAN  (parallel batches)
 # ─────────────────────────────────────────────────────────
 def run_scan(
+    
     symbols: Optional[list[str]] = None,
     progress_callback=None,
 ) -> list[BreakoutResult]:
@@ -282,6 +292,7 @@ def run_scan(
 
     # Split into fixed-size batches
     batches = [
+        print(f"📦 Total batches created: {len(batches)}")
         symbols[i : i + Config.BATCH_SIZE]
         for i in range(0, len(symbols), Config.BATCH_SIZE)
     ]
